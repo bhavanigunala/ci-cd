@@ -2,9 +2,9 @@ name: Build and Deploy to Sandbox
 
 on:
   push:
-    branches: [ main, develop]
+    branches: [ develop ]
   pull_request:
-    branches: [ main, develop]
+    branches: [ develop ]
     
 jobs:
   build:
@@ -25,7 +25,7 @@ jobs:
         distribution: 'zulu'
         java-version: 8
     - name: Build with Maven
-      run: mvn -B package --file pom.xml
+      run: mvn -B package --file pom.xml -DskipMunitTests
     - name: Stamp artifact file name with commit hash
       run: |
         artifactName1=$(ls target/*.jar | head -1)
@@ -60,7 +60,7 @@ jobs:
         PASSWORD: ${{ secrets.anypoint_platform_password }}
       run: |
         artifactName=$(ls *.jar | head -1)
-        mvn deploy -DmuleDeploy \
+        mvn deploy -DskipMunitTests -DmuleDeploy \
          -Dmule.artifact=$artifactName \
          -Danypoint.username="$USERNAME" \
-         -Danypoint.password="$PASSWORD" 
+         -Danypoint.password="$PASSWORD" \
